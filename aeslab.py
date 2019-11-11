@@ -6,34 +6,6 @@ from base64 import b64encode
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 
-'''
-cipher = AES.new(key.encode("utf8"), AES.MODE_ECB)
-decipher = AES.new(key.encode("utf8"),AES.MODE_ECB)
-maly = open("polMB.txt","r")
-sredni = open("8MB.txt","r")
-duzy = open("400MB.txt","r")
-maly1 = maly.read()
-sredni1 = sredni.read()
-duzy1 = duzy.read()
-maly_szyfr_start_ECB = time.time()
-msg = cipher.encrypt(maly1.encode("utf8"))
-maly_szyfr_stop_ECB = time.time() - maly_szyfr_start_ECB
-
-maly_deszyfr_start_ECB = time.time()
-msg1 = cipher.decrypt(msg)
-maly_deszyfr_stop_ECB = time.time() - maly_deszyfr_start_ECB
-
-print("Szyfrowanie malego fileu ECB: " + str(maly_szyfr_stop_ECB) + "\n")
-print("Deszyfrowanie malego fileu ECB: " + str(maly_deszyfr_stop_ECB) + "\n")
-
-sredni_szyfr_start = time.time()
-msg2 = cipher.encrypt(sredni1.encode("utf8"))
-maly_szyfr_stop = time.time() - sredni_szyfr_start
-
-maly_deszyfr_start = time.time()
-msg1 = cipher.decrypt(msg)
-maly_deszyfr_stop = time.time() - maly_deszyfr_start
-'''
 
 def encrypt_ECB(file, key):
     cipher = AES.new(key.encode("utf8"), AES.MODE_ECB)
@@ -129,6 +101,7 @@ def decrypt_CTR(file, key):
     print("Decryption time (CTR): " + str(end_time))
     return decrypted_text
 
+#file sizes: small = 1 024KB, medium = 32 768KB, big = 131 072KB
 
 key = 'abcdefghijklmnop'
 iv = b'0000000000000000'
@@ -172,7 +145,7 @@ d5 = decrypt_CTR(s5, key)
 #f2.write(str(s5))
 #f2.close()
 
-'''
+
 print("\nMedium file: ")
 m1 = encrypt_ECB(medium1, key)
 d6 = decrypt_ECB(m1, key)
@@ -205,9 +178,9 @@ d14 = decrypt_CFB(b4, key)
 
 b5 = encrypt_CTR(big1, key)
 d15 = decrypt_CTR(b5, key)
-'''
 
-#checking what's wrong with errors in cryptogram
+
+#checking what's wrong with errors in cryptogram - example
 file1 = open("smallECBerr.txt")
 file1_inside = file1.read()
 b_file1_inside = bytes(file1_inside, 'utf-8')
@@ -239,11 +212,3 @@ output.close()
 #b_file5_inside = bytes(file5_inside, 'utf-8')
 #d_err5 = decrypt_OFB(b_file5_inside, key)
 ##zmiana jednego bitu powoduje błędy tylko w jednym bajcie
-
-#here1
-#x1 = open("inne_ECB.txt", "r+")
-#x2 = x1.read()
-#x3 = deszyfrowanie_ECB(x2, key)
-#print(x3)
-#end here
-##zmiana w szyfrogramie metoda ECB powoduje znieksztalcenie kilka blokow
