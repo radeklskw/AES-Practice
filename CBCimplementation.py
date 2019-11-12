@@ -10,19 +10,18 @@ def xor(in1, in2):
     return bytes(ret)
 
 
-def decrypt_aes_ecb(data, key):
+def decrypt_AES_ECB(data, key):
     cipher = AES.new(key, AES.MODE_ECB)
     return cipher.decrypt(data)
 
 
-def encrypt_aes_ecb(data, key):
+def encrypt_AES_ECB(data, key):
     cipher = AES.new(key, AES.MODE_ECB)
     return cipher.encrypt(data)
 
 
 def pkcs7(val, block_size=16):
     remaining = block_size - len(val) % block_size
-
     if remaining == block_size:
         remaining = 16
     ret = val + chr(remaining).encode() * remaining
@@ -40,14 +39,13 @@ def unpkcs7(val):
     return val[:-pad_amount]
 
 
-def decrypt_aes_cbc(data, key, iv=b'\x00' * 16, pad=True):
+def decrypt_AES_CBC(data, key, iv=b'\x00' * 16, pad=True):
     prev_chunk = iv
-
     decrypted = []
 
     for i in range(0, len(data), 16):
         chunk = data[i: i + 16]
-        decrypted += xor(decrypt_aes_ecb(chunk, key), prev_chunk)
+        decrypted += xor(decrypt_AES_ECB(chunk, key), prev_chunk)
         prev_chunk = chunk
 
     if pad:
@@ -55,19 +53,18 @@ def decrypt_aes_cbc(data, key, iv=b'\x00' * 16, pad=True):
     return bytes(decrypted)
 
 
-def encrypt_aes_cbc(data, key, iv=b'\x00' * 16, pad=True):
+def encrypt_AES_CBC(data, key, iv=b'\x00' * 16, pad=True):
     if pad:
         padded = pkcs7(data)
     else:
         padded = data
 
     prev_chunk = iv
-
     encrypted = []
 
     for i in range(0, len(padded), 16):
         chunk = padded[i: i + 16]
-        encrypted_block = encrypt_aes_ecb(xor(chunk, prev_chunk), key)
+        encrypted_block = encrypt_AES_ECB(xor(chunk, prev_chunk), key)
         encrypted += encrypted_block
         prev_chunk = encrypted_block
 
@@ -77,9 +74,9 @@ def encrypt_aes_cbc(data, key, iv=b'\x00' * 16, pad=True):
 file1 = open("lorem.txt", "r+")
 file1_input = file1.read()
 
-result = encrypt_aes_cbc(file1_input.encode("utf8"), b"TIANANMEN SQUARE")
+result = encrypt_AES_CBC(file1_input.encode("utf8"), b"TIANANMEN SQUARE")
 result = b64encode(result).decode()
 print(result)
 
-decrypted_txt = decrypt_aes_cbc(b64decode(result), b"TIANANMEN SQUARE")
+decrypted_txt = decrypt_AES_CBC(b64decode(result), b"TIANANMEN SQUARE")
 print(decrypted_txt)
