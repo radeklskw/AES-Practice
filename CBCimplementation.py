@@ -20,16 +20,15 @@ def encrypt_AES_ECB(data, key):
     return cipher.encrypt(data)
 
 
-def pkcs7(val, block_size=16):
+def pack(val, block_size=16):
     remaining = block_size - len(val) % block_size
     if remaining == block_size:
         remaining = 16
     ret = val + chr(remaining).encode() * remaining
-
     return ret
 
 
-def unpkcs7(val):
+def unpack(val):
     pad_amount = val[-1]
     if pad_amount == 0:
         raise Exception
@@ -49,13 +48,13 @@ def decrypt_AES_CBC(data, key, iv=b'\x00' * 16, pad=True):
         prev_chunk = chunk
 
     if pad:
-        return unpkcs7(bytes(decrypted))
+        return unpack(bytes(decrypted))
     return bytes(decrypted)
 
 
 def encrypt_AES_CBC(data, key, iv=b'\x00' * 16, pad=True):
     if pad:
-        padded = pkcs7(data)
+        padded = pack(data)
     else:
         padded = data
 
